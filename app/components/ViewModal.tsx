@@ -131,19 +131,19 @@ export const ViewModal: React.FC<ExtendedViewModalProps> = ({ entry, onClose, on
           {/* Question Section */}
           <div className="md:flex-1 md:w-1/2 flex flex-col border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-800">
             <div className="p-4 md:p-6 md:flex-1 md:overflow-y-auto">
-              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
                 Question {isEditing && '(Editing)'}
               </h3>
               {isEditing ? (
                 <textarea
                   value={editedQuestion}
                   onChange={(e) => setEditedQuestion(e.target.value)}
-                  className="w-full min-h-[200px] md:h-[calc(100%-2rem)] px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent transition-colors resize-none"
+                  className="w-full min-h-[200px] md:h-[calc(100%-2rem)] px-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent transition-colors resize-none text-base leading-7"
                   placeholder="Enter question..."
                   autoFocus
                 />
               ) : (
-                <div className="text-sm md:text-base text-gray-900 dark:text-white leading-relaxed whitespace-pre-wrap">
+                <div className="text-[15px] md:text-base text-gray-900 dark:text-white leading-7 md:leading-relaxed whitespace-pre-wrap bg-gray-50/50 dark:bg-gray-800/30 p-4 rounded-lg border border-gray-100 dark:border-gray-800">
                   {entry.question}
                 </div>
               )}
@@ -180,10 +180,10 @@ export const ViewModal: React.FC<ExtendedViewModalProps> = ({ entry, onClose, on
           {/* Ground Truth Section */}
           <div className="md:flex-1 md:w-1/2 flex flex-col">
             <div className="p-4 md:p-6 md:flex-1 md:overflow-y-auto">
-              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">
                 Ground Truth Text
               </h3>
-              <div className="text-sm md:text-base text-gray-900 dark:text-white leading-relaxed whitespace-pre-wrap">
+              <div className="text-[15px] md:text-base text-gray-900 dark:text-white leading-7 md:leading-relaxed whitespace-pre-wrap bg-gray-50/50 dark:bg-gray-800/30 p-4 rounded-lg border border-gray-100 dark:border-gray-800">
                 {entry.ground_truth_text}
               </div>
             </div>
