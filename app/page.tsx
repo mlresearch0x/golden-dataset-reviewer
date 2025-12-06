@@ -82,6 +82,12 @@ export default function Home() {
   };
 
   const handleImport = async (importedEntries: GroundTruthEntry[]) => {
+    // Backend protection: Reject import if dataset already exists
+    if (entries.length > 0) {
+      alert('⚠️ Import Blocked: Dataset already exists!\n\nYou have ' + entries.length + ' entries loaded. Please export or clear your current dataset before importing new data to prevent accidental data loss.');
+      return;
+    }
+
     setEntries(importedEntries);
     // Save immediately
     if (username) {
@@ -264,12 +270,32 @@ export default function Home() {
         {/* Import/Export Bar */}
         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
           <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-            <div className="flex-1">
-              <h2 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Import Data
-              </h2>
-              <FileImport onImport={handleImport} />
-            </div>
+            {entries.length === 0 ? (
+              <div className="flex-1">
+                <h2 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Import Data
+                </h2>
+                <FileImport onImport={handleImport} />
+              </div>
+            ) : (
+              <div className="flex-1">
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <div className="flex-1">
+                      <h3 className="text-sm font-semibold text-yellow-800 dark:text-yellow-200 mb-1">
+                        Dataset Already Loaded
+                      </h3>
+                      <p className="text-xs text-yellow-700 dark:text-yellow-300">
+                        You have {entries.length} {entries.length === 1 ? 'entry' : 'entries'} loaded. Import is disabled to prevent accidental data loss. Export or clear your current dataset first.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="flex gap-3 flex-wrap">
               <button
                 onClick={() => setIsAddModalOpen(true)}
