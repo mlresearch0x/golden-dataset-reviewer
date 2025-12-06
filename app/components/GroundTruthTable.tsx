@@ -250,28 +250,54 @@ export const GroundTruthTable: React.FC<GroundTruthTableProps> = ({
                 >
                   View Full
                 </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(entry);
-                  }}
-                  className="px-4 py-2.5 border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors text-sm active:scale-95"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(entry.id!);
-                  }}
-                  className={`col-span-2 px-4 py-2.5 rounded-lg font-medium transition-colors text-sm active:scale-95 ${
-                    deleteConfirm === entry.id
-                      ? 'bg-red-600 text-white hover:bg-red-700'
-                      : 'border-2 border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950'
-                  }`}
-                >
-                  {deleteConfirm === entry.id ? '⚠️ Tap Again to Confirm Delete' : 'Delete'}
-                </button>
+                {!entry.approved ? (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit(entry);
+                    }}
+                    className="px-4 py-2.5 border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors text-sm active:scale-95"
+                  >
+                    Edit
+                  </button>
+                ) : (
+                  <button
+                    disabled
+                    className="px-4 py-2.5 border-2 border-gray-200 dark:border-gray-800 text-gray-400 dark:text-gray-600 rounded-lg cursor-not-allowed font-medium text-sm opacity-50"
+                    title="Approved entries cannot be edited"
+                  >
+                    <svg className="w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    Locked
+                  </button>
+                )}
+                {!entry.approved ? (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(entry.id!);
+                    }}
+                    className={`col-span-2 px-4 py-2.5 rounded-lg font-medium transition-colors text-sm active:scale-95 ${
+                      deleteConfirm === entry.id
+                        ? 'bg-red-600 text-white hover:bg-red-700'
+                        : 'border-2 border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950'
+                    }`}
+                  >
+                    {deleteConfirm === entry.id ? '⚠️ Tap Again to Confirm Delete' : 'Delete'}
+                  </button>
+                ) : (
+                  <button
+                    disabled
+                    className="col-span-2 px-4 py-2.5 border-2 border-gray-200 dark:border-gray-800 text-gray-400 dark:text-gray-600 rounded-lg cursor-not-allowed font-medium text-sm opacity-50"
+                    title="Approved entries cannot be deleted"
+                  >
+                    <svg className="w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    Protected
+                  </button>
+                )}
               </div>
             </div>
           ))
@@ -379,30 +405,50 @@ export const GroundTruthTable: React.FC<GroundTruthTableProps> = ({
                       >
                         View
                       </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onEdit(entry);
-                        }}
-                        className="px-3 py-1 bg-black dark:bg-white text-white dark:text-black rounded hover:bg-gray-800 dark:hover:bg-gray-100 font-medium transition-colors text-xs"
-                        title="Edit"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(entry.id!);
-                        }}
-                        className={`px-3 py-1 rounded font-medium transition-colors text-xs ${
-                          deleteConfirm === entry.id
-                            ? 'bg-red-600 text-white hover:bg-red-700'
-                            : 'border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950'
-                        }`}
-                        title={deleteConfirm === entry.id ? 'Click again to confirm' : 'Delete'}
-                      >
-                        {deleteConfirm === entry.id ? 'Confirm?' : 'Delete'}
-                      </button>
+                      {!entry.approved ? (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEdit(entry);
+                          }}
+                          className="px-3 py-1 bg-black dark:bg-white text-white dark:text-black rounded hover:bg-gray-800 dark:hover:bg-gray-100 font-medium transition-colors text-xs"
+                          title="Edit"
+                        >
+                          Edit
+                        </button>
+                      ) : (
+                        <button
+                          disabled
+                          className="px-3 py-1 border border-gray-300 dark:border-gray-700 text-gray-400 dark:text-gray-600 rounded cursor-not-allowed font-medium text-xs opacity-50"
+                          title="Approved entries cannot be edited"
+                        >
+                          🔒 Locked
+                        </button>
+                      )}
+                      {!entry.approved ? (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(entry.id!);
+                          }}
+                          className={`px-3 py-1 rounded font-medium transition-colors text-xs ${
+                            deleteConfirm === entry.id
+                              ? 'bg-red-600 text-white hover:bg-red-700'
+                              : 'border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950'
+                          }`}
+                          title={deleteConfirm === entry.id ? 'Click again to confirm' : 'Delete'}
+                        >
+                          {deleteConfirm === entry.id ? 'Confirm?' : 'Delete'}
+                        </button>
+                      ) : (
+                        <button
+                          disabled
+                          className="px-3 py-1 border border-gray-300 dark:border-gray-700 text-gray-400 dark:text-gray-600 rounded cursor-not-allowed font-medium text-xs opacity-50"
+                          title="Approved entries are protected"
+                        >
+                          Protected
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
