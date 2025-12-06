@@ -1,7 +1,10 @@
+'use client'
+
 import { useState, useEffect } from 'react';
-import type { GroundTruthEntry } from './types';
-import { exportToJSON, exportToJSONL, exportToCSV, downloadSampleDataset } from './utils';
-import { StorageService } from './storage';
+import type { GroundTruthEntry } from './lib/types';
+import { downloadSampleDataset } from './lib/utils';
+import { loadCurrentDataset, saveDataset, updateDataset, getUsername } from './actions/dataset';
+import { exportToJSON, exportToJSONL, exportToCSV } from './actions/export';
 import { useTheme } from './contexts/ThemeContext';
 import { FileImport } from './components/FileImport';
 import { StatsBar } from './components/StatsBar';
@@ -10,8 +13,9 @@ import { EditModal } from './components/EditModal';
 import { AddNewModal } from './components/AddNewModal';
 import { ViewModal } from './components/ViewModal';
 import { HowToModal } from './components/HowToModal';
+import { generateId } from './lib/utils';
 
-function App() {
+export default function Home() {
   const { theme, toggleTheme } = useTheme();
   const [entries, setEntries] = useState<GroundTruthEntry[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,54 +23,51 @@ function App() {
   const [editingEntry, setEditingEntry] = useState<GroundTruthEntry | null>(null);
   const [viewingEntry, setViewingEntry] = useState<GroundTruthEntry | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [currentDatasetName, setCurrentDatasetName] = useState<string>('');
-  const [showLoadPrompt, setShowLoadPrompt] = useState(false);
   const [showUsernamePrompt, setShowUsernamePrompt] = useState(false);
   const [username, setUsername] = useState<string>('');
   const [showHowToModal, setShowHowToModal] = useState(false);
   const [showExportMenu, setShowExportMenu] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Check for username and unsaved work on mount
+  // Load dataset and username on mount
   useEffect(() => {
-    // Check if username is set
-    const storedUsername = StorageService.getUsername();
-    if (storedUsername) {
-      setUsername(storedUsername);
-    } else {
-      setShowUsernamePrompt(true);
-    }
-
-    // Check for unsaved work
-    const lastDataset = StorageService.getLastWorkingDataset();
-    if (lastDataset && lastDataset.entries.length > 0) {
-      setShowLoadPrompt(true);
-    }
-  }, []);
-
-  // Auto-save whenever entries or dataset name changes
-  useEffect(() => {
-    if (entries.length > 0 && currentDatasetName.trim()) {
+    async function loadData() {
       try {
-        StorageService.saveDataset(currentDatasetName, entries);
+        // Check if username exists
+        const storedUsername = await getUsername();
+        if (storedUsername) {
+          setUsername(storedUsername);
+        } else {
+          // Check localStorage for backward compatibility
+          const localUsername = localStorage.getItem('ground_truth_username');
+          if (localUsername) {
+            setUsername(localUsername);
+          } else {
+            setShowUsernamePrompt(true);
+          }
+        }
+
+        // Load dataset
+        const dataset = await loadCurrentDataset();
+        if (dataset) {
+          setEntries(dataset.entries);
+        }
       } catch (error) {
-        console.error('Auto-save failed:', error);
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
       }
     }
-  }, [entries, currentDatasetName]);
 
-  const handleLoadPreviousWork = () => {
-    const lastDataset = StorageService.getLastWorkingDataset();
-    if (lastDataset) {
-      setCurrentDatasetName(lastDataset.name);
-      setEntries(lastDataset.entries);
+    loadData();
+  }, []);
+
+  // Auto-save whenever entries change
+  useEffect(() => {
+    if (!loading && entries.length > 0 && username) {
+      updateDataset(entries);
     }
-    setShowLoadPrompt(false);
-  };
-
-  const handleStartFresh = () => {
-    StorageService.clearCurrentDataset();
-    setShowLoadPrompt(false);
-  };
+  }, [entries, username, loading]);
 
   const handleSaveUsername = () => {
     const trimmedUsername = username.trim();
@@ -74,35 +75,54 @@ function App() {
       alert('Please enter your name');
       return;
     }
-    StorageService.setUsername(trimmedUsername);
+    // Store in localStorage for persistence
+    localStorage.setItem('ground_truth_username', trimmedUsername);
     setUsername(trimmedUsername);
     setShowUsernamePrompt(false);
   };
 
-  const handleImport = (importedEntries: GroundTruthEntry[]) => {
-    // Generate a unique name with current date for the imported dataset
-    const dateStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-    const newName = StorageService.generateUniqueName(`Dataset ${dateStr}`);
-    setCurrentDatasetName(newName);
+  const handleImport = async (importedEntries: GroundTruthEntry[]) => {
     setEntries(importedEntries);
-    // Auto-save will trigger via useEffect
+    // Save immediately
+    if (username) {
+      await saveDataset(importedEntries, username);
+    }
   };
 
-  const handleExportJSON = () => {
-    const timestamp = new Date().toISOString().split('T')[0];
-    exportToJSON(entries, `ground_truth_export_${timestamp}.json`);
+  const handleExportJSON = async () => {
+    const content = await exportToJSON(entries);
+    // Trigger browser download
+    const blob = new Blob([content], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `ground_truth_export_${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
     setShowExportMenu(false);
   };
 
-  const handleExportJSONL = () => {
-    const timestamp = new Date().toISOString().split('T')[0];
-    exportToJSONL(entries, `ground_truth_export_${timestamp}.jsonl`);
+  const handleExportJSONL = async () => {
+    const content = await exportToJSONL(entries);
+    const blob = new Blob([content], { type: 'application/jsonl' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `ground_truth_export_${new Date().toISOString().split('T')[0]}.jsonl`;
+    link.click();
+    URL.revokeObjectURL(url);
     setShowExportMenu(false);
   };
 
-  const handleExportCSV = () => {
-    const timestamp = new Date().toISOString().split('T')[0];
-    exportToCSV(entries, `ground_truth_export_${timestamp}.csv`);
+  const handleExportCSV = async () => {
+    const content = await exportToCSV(entries);
+    const blob = new Blob([content], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `ground_truth_export_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
     setShowExportMenu(false);
   };
 
@@ -112,7 +132,7 @@ function App() {
 
   const handleViewEdit = (updatedEntry: GroundTruthEntry) => {
     setEntries(entries.map((e) => (e.id === updatedEntry.id ? updatedEntry : e)));
-    setViewingEntry(updatedEntry); // Update the modal's entry prop
+    setViewingEntry(updatedEntry);
   };
 
   const handleEdit = (entry: GroundTruthEntry) => {
@@ -125,7 +145,7 @@ function App() {
   };
 
   const handleAdd = (newEntry: GroundTruthEntry) => {
-    setEntries([...entries, newEntry]);
+    setEntries([...entries, { ...newEntry, id: generateId() }]);
   };
 
   const handleDelete = (id: string) => {
@@ -154,32 +174,13 @@ function App() {
     }
   };
 
-  const handleRenameDataset = () => {
-    const newName = prompt('Enter new dataset name:', currentDatasetName);
-    if (!newName || newName.trim() === '') return;
-
-    const trimmedName = newName.trim();
-    if (trimmedName === currentDatasetName) return;
-
-    if (StorageService.datasetExists(trimmedName)) {
-      alert('A dataset with this name already exists. Please choose a different name.');
-      return;
-    }
-
-    if (StorageService.getCurrentDatasetName() === currentDatasetName) {
-      // Rename existing dataset in storage
-      const success = StorageService.renameDataset(currentDatasetName, trimmedName);
-      if (success) {
-        setCurrentDatasetName(trimmedName);
-        alert(`Dataset renamed to "${trimmedName}"`);
-      } else {
-        alert('Failed to rename dataset');
-      }
-    } else {
-      // Just update the name for unsaved dataset
-      setCurrentDatasetName(trimmedName);
-    }
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
+        <div className="text-gray-900 dark:text-white">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-black transition-colors duration-200">
@@ -213,34 +214,6 @@ function App() {
             >
               Continue
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* Load Previous Work Prompt */}
-      {showLoadPrompt && !showUsernamePrompt && (
-        <div className="fixed inset-0 bg-black/50 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-800">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-              Resume Previous Work?
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              You have unsaved work from a previous session. Would you like to continue where you left off?
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={handleStartFresh}
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
-              >
-                Start Fresh
-              </button>
-              <button
-                onClick={handleLoadPreviousWork}
-                className="flex-1 px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-md hover:bg-gray-800 dark:hover:bg-gray-100 font-medium transition-colors"
-              >
-                Load Previous Work
-              </button>
-            </div>
           </div>
         </div>
       )}
@@ -287,44 +260,6 @@ function App() {
             </div>
           </div>
         </div>
-
-        {/* Dataset Name and Management */}
-        {entries.length > 0 && (
-          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Dataset Name
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={currentDatasetName}
-                    onChange={(e) => setCurrentDatasetName(e.target.value)}
-                    placeholder="Enter dataset name..."
-                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent transition-colors"
-                  />
-                  <button
-                    onClick={handleRenameDataset}
-                    className="px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors"
-                  >
-                    Rename
-                  </button>
-                </div>
-              </div>
-              <div className="flex items-end">
-                <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md">
-                  <svg className="w-4 h-4 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Auto-saved
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Import/Export Bar */}
         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
@@ -437,5 +372,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

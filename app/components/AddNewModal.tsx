@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import type { GroundTruthEntry } from '../types';
-import { validateEntry, generateId } from '../utils';
+import type { GroundTruthEntry } from '../lib/types';
+import { validateEntry, generateId } from '../lib/utils';
 
 interface AddNewModalProps {
   isOpen: boolean;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { GroundTruthEntry } from '../types';
+import type { GroundTruthEntry } from '../lib/types';
 
 interface GroundTruthTableProps {
   entries: GroundTruthEntry[];

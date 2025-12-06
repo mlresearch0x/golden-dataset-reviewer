@@ -1,3 +1,5 @@
+'use client'
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 type Theme = 'light' | 'dark';
@@ -11,6 +13,11 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
+    // Only access browser APIs on the client side
+    if (typeof window === 'undefined') {
+      return 'light';
+    }
+
     // Check localStorage first
     const savedTheme = localStorage.getItem('theme') as Theme;
     if (savedTheme) return savedTheme;

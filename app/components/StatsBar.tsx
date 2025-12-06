@@ -1,5 +1,5 @@
 import React from 'react';
-import type { GroundTruthEntry } from '../types';
+import type { GroundTruthEntry } from '../lib/types';
 
 interface StatsBarProps {
   entries: GroundTruthEntry[];

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
-import { parseJSONFile } from '../utils';
-import type { GroundTruthEntry } from '../types';
+import { parseJSONFile } from '../lib/utils';
+import type { GroundTruthEntry } from '../lib/types';
 
 interface FileImportProps {
   onImport: (entries: GroundTruthEntry[]) => void;

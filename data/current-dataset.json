@@ -1,0 +1,80 @@
+{
+  "name": "Dataset 2025-12-06",
+  "username": "Solomon Aboyeji",
+  "created_at": "2025-12-06T12:51:18.046Z",
+  "updated_at": "2025-12-06T12:52:03.416Z",
+  "entries": [
+    {
+      "question": "What is machine learning?",
+      "ground_truth_chunk_id": "ML-101",
+      "ground_truth_text": "Machine learning is a subset of artificial intelligence that enables systems to learn and improve from experience without being explicitly programmed. It focuses on developing computer programs that can access data and use it to learn for themselves.",
+      "id": "1765025478006_nmug66fz5",
+      "approved": true,
+      "date_approved": "2025-12-06T12:51:24.923Z",
+      "approved_by": "Solomon Aboyeji"
+    },
+    {
+      "question": "What are the main types of machine learning?",
+      "ground_truth_chunk_id": "ML-102",
+      "ground_truth_text": "The three main types of machine learning are: 1) Supervised Learning - where the model learns from labeled training data, 2) Unsupervised Learning - where the model finds patterns in unlabeled data, and 3) Reinforcement Learning - where the model learns through trial and error using feedback from its own actions.",
+      "id": "1765025478006_aja4xr7k2",
+      "approved": true,
+      "date_approved": "2025-12-06T12:51:25.734Z",
+      "approved_by": "Solomon Aboyeji"
+    },
+    {
+      "question": "What is neural network architecture?",
+      "ground_truth_chunk_id": "NN-201",
+      "ground_truth_text": "A neural network architecture refers to the arrangement of neurons and layers in a neural network. It includes the input layer, one or more hidden layers, and an output layer. Each layer contains interconnected nodes (neurons) that process information and pass it to the next layer.",
+      "id": "1765025478006_6pz5nx193",
+      "approved": true,
+      "date_approved": "2025-12-06T12:51:26.302Z",
+      "approved_by": "Solomon Aboyeji"
+    },
+    {
+      "question": "What is the purpose of the activation function in neural networks?",
+      "ground_truth_chunk_id": "NN-202",
+      "ground_truth_text": "Activation functions introduce non-linearity into the neural network, allowing it to learn complex patterns. Common activation functions include ReLU (Rectified Linear Unit), Sigmoid, and Tanh. They determine whether a neuron should be activated based on the weighted sum of its inputs.",
+      "id": "1765025478006_pzvhkg4cm",
+      "approved": true,
+      "date_approved": "2025-12-06T12:51:26.917Z",
+      "approved_by": "Solomon Aboyeji"
+    },
+    {
+      "question": "What is data preprocessing and why is it important?",
+      "ground_truth_chunk_id": "DATA-301",
+      "ground_truth_text": "Data preprocessing is the process of cleaning and transforming raw data before training a machine learning model. It includes handling missing values, removing duplicates, normalizing data, and encoding categorical variables. Proper preprocessing improves model accuracy and training efficiency.",
+      "id": "1765025478006_qh7prvj1x",
+      "approved": true,
+      "date_approved": "2025-12-06T12:51:27.849Z",
+      "approved_by": "Solomon Aboyeji"
+    },
+    {
+      "question": "What is overfitting in machine learning?",
+      "ground_truth_chunk_id": "ML-103",
+      "ground_truth_text": "Overfitting occurs when a machine learning model learns the training data too well, including its noise and outliers, resulting in poor performance on new, unseen data. The model essentially memorizes the training data rather than learning general patterns. Techniques like regularization, cross-validation, and using more training data can help prevent overfitting.",
+      "id": "1765025478006_6m4kplq7p",
+      "approved": true,
+      "date_approved": "2025-12-06T12:51:38.214Z",
+      "approved_by": "Solomon Aboyeji"
+    },
+    {
+      "question": "What is the difference between classification and regression?",
+      "ground_truth_chunk_id": "ML-104",
+      "ground_truth_text": "Classification and regression are both supervised learning tasks, but they differ in their output types. Classification predicts discrete categories or classes (e.g., spam or not spam), while regression predicts continuous numerical values (e.g., house prices). Classification uses metrics like accuracy and F1-score, whereas regression uses MSE and R-squared.",
+      "id": "1765025478006_bah5pl77o",
+      "approved": true,
+      "date_approved": "2025-12-06T12:51:50.003Z",
+      "approved_by": "Solomon Aboyeji"
+    },
+    {
+      "question": "What is feature engineering?",
+      "ground_truth_chunk_id": "DATA-302",
+      "ground_truth_text": "Feature engineering is the process of selecting, modifying, or creating new features from raw data to improve machine learning model performance. It involves domain knowledge to transform data into a format that better represents the underlying problem, potentially including feature scaling, creating interaction terms, or extracting features from text or images.",
+      "id": "1765025478006_luhlt7t08",
+      "approved": true,
+      "date_approved": "2025-12-06T12:52:03.369Z",
+      "approved_by": "Solomon Aboyeji"
+    }
+  ]
+}
