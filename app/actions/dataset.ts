@@ -6,7 +6,7 @@ import {
   writeDataset,
   deleteDataset,
   type StoredDataset
-} from '@/app/lib/file-storage';
+} from '@/app/lib/s3-storage';
 import type { GroundTruthEntry } from '@/app/lib/types';
 
 /**
