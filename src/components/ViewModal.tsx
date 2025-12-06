@@ -15,12 +15,21 @@ export const ViewModal: React.FC<ExtendedViewModalProps> = ({ entry, onClose, on
   const [isEditing, setIsEditing] = useState(false);
   const [editedQuestion, setEditedQuestion] = useState('');
 
-  // Initialize editedQuestion when entry changes or when entering edit mode
+  // Initialize editedQuestion when entry changes
   React.useEffect(() => {
     if (entry) {
       setEditedQuestion(entry.question);
+      // Reset editing state when entry changes (e.g., when switching entries or after update)
+      setIsEditing(false);
     }
-  }, [entry]);
+  }, [entry?.id]); // Only trigger when the entry ID changes
+
+  // Sync editedQuestion with entry.question when not editing
+  React.useEffect(() => {
+    if (entry && !isEditing) {
+      setEditedQuestion(entry.question);
+    }
+  }, [entry?.question, isEditing]);
 
   if (!entry) return null;
 
@@ -69,6 +78,14 @@ export const ViewModal: React.FC<ExtendedViewModalProps> = ({ entry, onClose, on
                 <span className="text-gray-300 dark:text-gray-700">/</span>
                 <span className="text-xs text-gray-600 dark:text-gray-400">
                   {new Date(entry.date_approved).toLocaleDateString()}
+                </span>
+              </>
+            )}
+            {entry.approved && entry.approved_by && (
+              <>
+                <span className="text-gray-300 dark:text-gray-700">/</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  by {entry.approved_by}
                 </span>
               </>
             )}

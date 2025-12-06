@@ -145,6 +145,9 @@ export const GroundTruthTable: React.FC<GroundTruthTableProps> = ({
                 Date Approved
               </th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                Approved By
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -152,7 +155,7 @@ export const GroundTruthTable: React.FC<GroundTruthTableProps> = ({
           <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
             {sortedEntries.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center">
+                <td colSpan={7} className="px-6 py-12 text-center">
                   <p className="text-gray-500 dark:text-gray-400">
                     {entries.length === 0 ? 'No entries yet. Import a JSON file to get started.' : 'No entries found. Try adjusting your search or filter.'}
                   </p>
@@ -183,6 +186,9 @@ export const GroundTruthTable: React.FC<GroundTruthTableProps> = ({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400" onClick={() => onView(entry)}>
                     {entry.date_approved ? new Date(entry.date_approved).toLocaleDateString() : '-'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400" onClick={() => onView(entry)}>
+                    {entry.approved_by || '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-2">

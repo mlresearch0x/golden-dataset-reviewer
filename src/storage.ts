@@ -15,6 +15,7 @@ export interface StoredDataset {
 
 const STORAGE_KEY = 'ground_truth_datasets';
 const CURRENT_DATASET_KEY = 'current_dataset_name';
+const USERNAME_KEY = 'ground_truth_username';
 
 export class StorageService {
   // Get all stored datasets
@@ -173,5 +174,20 @@ export class StorageService {
   static datasetExists(name: string): boolean {
     const datasets = this.getAllDatasets();
     return datasets.some(ds => ds.name === name);
+  }
+
+  // Get stored username
+  static getUsername(): string | null {
+    return localStorage.getItem(USERNAME_KEY);
+  }
+
+  // Set username
+  static setUsername(username: string): void {
+    localStorage.setItem(USERNAME_KEY, username);
+  }
+
+  // Check if username is set
+  static hasUsername(): boolean {
+    return !!this.getUsername();
   }
 }
