@@ -127,10 +127,10 @@ export const ViewModal: React.FC<ExtendedViewModalProps> = ({ entry, onClose, on
         </div>
 
         {/* Content: Responsive Layout */}
-        <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        <div className="flex-1 flex flex-col md:flex-row overflow-auto md:overflow-hidden">
           {/* Question Section */}
-          <div className="flex-1 md:w-1/2 flex flex-col border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-800">
-            <div className="flex-1 p-4 md:p-6 overflow-y-auto">
+          <div className="md:flex-1 md:w-1/2 flex flex-col border-b md:border-b-0 md:border-r border-gray-200 dark:border-gray-800">
+            <div className="p-4 md:p-6 md:flex-1 md:overflow-y-auto">
               <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
                 Question {isEditing && '(Editing)'}
               </h3>
@@ -178,8 +178,8 @@ export const ViewModal: React.FC<ExtendedViewModalProps> = ({ entry, onClose, on
           </div>
 
           {/* Ground Truth Section */}
-          <div className="flex-1 md:w-1/2 flex flex-col">
-            <div className="flex-1 p-4 md:p-6 overflow-y-auto">
+          <div className="md:flex-1 md:w-1/2 flex flex-col">
+            <div className="p-4 md:p-6 md:flex-1 md:overflow-y-auto">
               <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
                 Ground Truth Text
               </h3>
