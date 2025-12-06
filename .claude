@@ -1,0 +1,159 @@
+# Ground Truth Management System
+
+## Project Overview
+This is a frontend-only research tool for managing, editing, and tracking ground truth datasets. It allows researchers to import JSON/JSONL data, review questions paired with ground truth text, and manage approval workflows.
+
+## Purpose
+- Import ground truth datasets (question + ground truth text + chunk ID)
+- Review and approve/reject entries
+- Edit questions while keeping ground truth text immutable
+- Export approved datasets
+- Persist work across sessions using localStorage
+
+## Tech Stack
+- **React 19.2.0** with TypeScript
+- **Vite** for build tooling
+- **TailwindCSS** for styling
+- **Dark Mode** support with system preference detection
+
+## Key Features
+
+### Data Management
+- **Import/Export**: JSON and JSONL file support
+- **LocalStorage**: Named datasets with auto-save prompts
+- **Dataset Naming**: Rename datasets, avoid duplicates
+- **Sortable Columns**: Click chunk ID header to sort
+
+### UI/UX
+- **Dark Mode**: Toggle with moon/sun icon in header
+- **Minimal Design**: Clean black/white theme, no emojis or gradients
+- **Two-Column Modal**: Question (left, editable) + Ground Truth Text (right, read-only)
+- **Clickable Rows**: Click any table row to open view modal (cursor: pointer)
+- **Inline Editing**: Edit questions directly in view modal
+
+### Approval Workflow
+- **Pending/Approved States**: Track approval status
+- **Approval Buttons**: Available in table and modal
+- **Date Tracking**: Records approval timestamps
+- **Statistics Dashboard**: Shows total, approved, pending, approval rate
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── FileImport.tsx          # File upload component
+│   ├── GroundTruthTable.tsx    # Main data table (clickable rows)
+│   ├── ViewModal.tsx           # Two-column view/edit modal
+│   ├── EditModal.tsx           # Standalone edit modal (legacy)
+│   ├── AddNewModal.tsx         # Create new entries
+│   └── StatsBar.tsx            # Statistics cards
+├── contexts/
+│   └── ThemeContext.tsx        # Dark mode state management
+├── storage.ts                  # LocalStorage service for datasets
+├── types.ts                    # TypeScript interfaces
+├── utils.ts                    # Import/export utilities
+└── App.tsx                     # Main application component
+```
+
+## Data Model
+
+```typescript
+interface GroundTruthEntry {
+  question: string;              // Editable
+  ground_truth_chunk_id: string; // Immutable (reference ID)
+  ground_truth_text: string;     // Immutable (source text)
+  approved?: boolean;            // Approval status
+  date_approved?: string;        // ISO timestamp
+  id?: string;                   // Internal tracking ID
+}
+```
+
+## Important Design Decisions
+
+### Immutability
+- **Chunk ID and Ground Truth Text are LOCKED** - cannot be edited to preserve data integrity
+- Only the **question field is editable**
+
+### Modal Behavior
+- **ViewModal**: Two-column layout (Question left | Ground Truth right)
+  - Inline editing with Edit/Cancel/Save toggle
+  - Approval button in header (only for pending entries)
+  - Click anywhere on table row to open
+- **EditModal**: Separate legacy modal (still available via Edit button)
+
+### Dark Mode
+- Uses Tailwind's `dark:` classes
+- Persists preference in localStorage
+- Detects system preference on first load
+- Toggle button in header
+
+### Storage
+- Multiple named datasets supported
+- Auto-prompts to resume previous work on startup
+- Prevents accidental overwrites with unique naming
+
+## Common Tasks
+
+### Adding New Features
+- All components use dark mode: `dark:bg-gray-900`, `dark:text-white`, etc.
+- Focus states: `focus:ring-black dark:focus:ring-white`
+- Buttons: Primary = black/white, Secondary = bordered
+
+### Styling Guidelines
+- **No emojis** in production UI
+- **No gradients** - use solid colors
+- **Minimal design** - clean, professional
+- **Consistent borders**: `border-gray-200 dark:border-gray-800`
+- **Rounded corners**: `rounded-lg` or `rounded-md`
+
+### State Management
+- React hooks (useState, useEffect)
+- No external state management library
+- Props drilling for simplicity
+
+### Important Rules
+1. **Never read node_modules** - exclude from searches
+2. **Hooks must be called unconditionally** - always before any returns
+3. **Row clicks open modals** - use `e.stopPropagation()` on action buttons
+4. **Update modal state on approval** - sync viewingEntry when approving
+
+## Build & Development
+
+```bash
+npm install          # Install dependencies
+npm run dev          # Start development server
+npm run build        # Production build
+```
+
+## File Formats
+
+**Expected JSON format:**
+```json
+[
+  {
+    "question": "Your question here?",
+    "ground_truth_chunk_id": "Section 11",
+    "ground_truth_text": "The actual text from the source document...",
+    "approved": false,
+    "date_approved": null
+  }
+]
+```
+
+JSONL format is also supported (one JSON object per line).
+
+## Future Enhancements (Not Implemented)
+- Backend integration
+- Multi-user support
+- Version history
+- Batch operations
+- Advanced search/filters
+- Export to other formats (CSV, XML)
+
+## Notes for Future Sessions
+- This is a **research tool** - prioritize simplicity over features
+- **Data integrity is critical** - ground truth text must remain unchanged
+- **User experience matters** - smooth interactions, immediate feedback
+- **Dark mode everywhere** - all new components must support it
+- When in doubt, keep it **minimal and professional**
