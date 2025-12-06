@@ -139,79 +139,106 @@ export const GroundTruthTable: React.FC<GroundTruthTableProps> = ({
           sortedEntries.map((entry) => (
             <div
               key={entry.id}
-              className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-              onClick={() => onView(entry)}
+              className="p-4 pb-6 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors active:bg-gray-100 dark:active:bg-gray-700 relative"
             >
-              {/* Card Header */}
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
-                      Chunk ID
-                    </span>
-                    <span className="text-sm font-bold text-gray-900 dark:text-white">
-                      {entry.ground_truth_chunk_id}
-                    </span>
+              {/* Tap hint */}
+              <div className="absolute top-2 right-2 text-xs text-gray-400 dark:text-gray-600 flex items-center gap-1">
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <span>Tap for details</span>
+              </div>
+
+              <div onClick={() => onView(entry)}>
+                {/* Card Header */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1 pr-24">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
+                        Chunk ID
+                      </span>
+                      <span className="text-lg font-bold text-gray-900 dark:text-white">
+                        {entry.ground_truth_chunk_id}
+                      </span>
+                    </div>
+                    {entry.approved ? (
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-semibold bg-black dark:bg-white text-white dark:text-black">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Approved
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-sm font-semibold bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 border border-yellow-300 dark:border-yellow-700">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                        </svg>
+                        Pending Review
+                      </span>
+                    )}
                   </div>
-                  {entry.approved ? (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-black dark:bg-white text-white dark:text-black">
-                      Approved
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300">
-                      Pending
-                    </span>
-                  )}
                 </div>
-              </div>
 
-              {/* Question */}
-              <div className="mb-3">
-                <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">
-                  Question
+                {/* Question */}
+                <div className="mb-3">
+                  <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1.5">
+                    Question
+                  </div>
+                  <div className="text-sm text-gray-900 dark:text-white line-clamp-3">
+                    {entry.question}
+                  </div>
                 </div>
-                <div className="text-sm text-gray-900 dark:text-white line-clamp-3">
-                  {entry.question}
-                </div>
-              </div>
 
-              {/* Ground Truth Preview */}
-              <div className="mb-3">
-                <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">
-                  Ground Truth (Preview)
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                  {entry.ground_truth_text}
-                </div>
-              </div>
-
-              {/* Metadata */}
-              {(entry.date_approved || entry.approved_by) && (
-                <div className="flex gap-4 mb-3 text-xs text-gray-600 dark:text-gray-400">
-                  {entry.date_approved && (
-                    <div>
-                      <span className="font-medium">Approved:</span> {new Date(entry.date_approved).toLocaleDateString()}
-                    </div>
-                  )}
-                  {entry.approved_by && (
-                    <div>
-                      <span className="font-medium">By:</span> {entry.approved_by}
+                {/* Ground Truth Preview */}
+                <div className="mb-4">
+                  <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1.5">
+                    Ground Truth (Preview)
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+                    {entry.ground_truth_text}
+                  </div>
+                  {entry.ground_truth_text.length > 150 && (
+                    <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                      Tap to read more...
                     </div>
                   )}
                 </div>
-              )}
 
-              {/* Actions */}
-              <div className="flex flex-wrap gap-2" onClick={(e) => e.stopPropagation()}>
+                {/* Metadata */}
+                {(entry.date_approved || entry.approved_by) && (
+                  <div className="flex flex-wrap gap-3 mb-4 text-xs">
+                    {entry.date_approved && (
+                      <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span>{new Date(entry.date_approved).toLocaleDateString()}</span>
+                      </div>
+                    )}
+                    {entry.approved_by && (
+                      <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span>{entry.approved_by}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Actions - Fixed at bottom */}
+              <div className="grid grid-cols-2 gap-2 pt-3 border-t border-gray-200 dark:border-gray-800" onClick={(e) => e.stopPropagation()}>
                 {!entry.approved && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       onApprove(entry.id!);
                     }}
-                    className="flex-1 min-w-[100px] px-3 py-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors text-sm"
+                    className="col-span-2 px-4 py-3 bg-green-600 dark:bg-green-700 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-800 font-semibold transition-colors text-sm active:scale-95"
                   >
-                    Approve
+                    ✓ Approve
                   </button>
                 )}
                 <button
@@ -219,16 +246,16 @@ export const GroundTruthTable: React.FC<GroundTruthTableProps> = ({
                     e.stopPropagation();
                     onView(entry);
                   }}
-                  className="flex-1 min-w-[100px] px-3 py-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors text-sm"
+                  className="px-4 py-2.5 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 font-medium transition-colors text-sm active:scale-95"
                 >
-                  View
+                  View Full
                 </button>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     onEdit(entry);
                   }}
-                  className="flex-1 min-w-[100px] px-3 py-2 bg-black dark:bg-white text-white dark:text-black rounded hover:bg-gray-800 dark:hover:bg-gray-100 font-medium transition-colors text-sm"
+                  className="px-4 py-2.5 border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 font-medium transition-colors text-sm active:scale-95"
                 >
                   Edit
                 </button>
@@ -237,13 +264,13 @@ export const GroundTruthTable: React.FC<GroundTruthTableProps> = ({
                     e.stopPropagation();
                     handleDelete(entry.id!);
                   }}
-                  className={`flex-1 min-w-[100px] px-3 py-2 rounded font-medium transition-colors text-sm ${
+                  className={`col-span-2 px-4 py-2.5 rounded-lg font-medium transition-colors text-sm active:scale-95 ${
                     deleteConfirm === entry.id
                       ? 'bg-red-600 text-white hover:bg-red-700'
-                      : 'border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950'
+                      : 'border-2 border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950'
                   }`}
                 >
-                  {deleteConfirm === entry.id ? 'Confirm?' : 'Delete'}
+                  {deleteConfirm === entry.id ? '⚠️ Tap Again to Confirm Delete' : 'Delete'}
                 </button>
               </div>
             </div>

@@ -362,7 +362,7 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 py-8">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 py-8 pb-20 md:pb-8">
         <div className="border-t border-gray-200 dark:border-gray-800 pt-6">
           <p className="text-center text-sm text-gray-600 dark:text-gray-400">
             Ground Truth Management System - Research Tool
