@@ -40,3 +40,5 @@ data/exports/*
 
 # Old Vite app backup
 old-vite-app
+
+data/current-dataset.json
