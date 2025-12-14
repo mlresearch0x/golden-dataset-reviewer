@@ -4,6 +4,7 @@ export interface GroundTruthEntry {
   ground_truth_text: string;
   approved?: boolean;
   date_approved?: string;
+  approved_by?: string; // Username of person who approved
   id?: string; // Internal ID for tracking
 }
 

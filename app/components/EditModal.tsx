@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { GroundTruthEntry } from '../types';
+import type { GroundTruthEntry } from '../lib/types';
 
 interface EditModalProps {
   entry: GroundTruthEntry | null;
