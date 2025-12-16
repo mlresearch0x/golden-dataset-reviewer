@@ -13,6 +13,7 @@ import { EditModal } from './components/EditModal';
 import { AddNewModal } from './components/AddNewModal';
 import { ViewModal } from './components/ViewModal';
 import { HowToModal } from './components/HowToModal';
+import { DatasetNavigation } from './components/DatasetNavigation';
 import { generateId } from './lib/utils';
 
 export default function Home() {
@@ -225,6 +226,9 @@ export default function Home() {
       )}
 
       <div className="max-w-[1600px] mx-auto p-4 md:p-6 lg:p-8 space-y-6">
+        {/* Dataset Navigation */}
+        <DatasetNavigation />
+
         {/* Header */}
         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
           <div className="flex items-center justify-between">

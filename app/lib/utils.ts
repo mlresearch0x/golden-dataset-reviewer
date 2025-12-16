@@ -1,4 +1,4 @@
-import type { GroundTruthEntry } from './types';
+import type { GroundTruthEntry, JSONLDocument } from './types';
 
 export const generateId = (): string => {
   return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -180,4 +180,110 @@ export const exportToCSV = (entries: GroundTruthEntry[], filename: string = 'gro
   link.download = filename;
   link.click();
   URL.revokeObjectURL(url);
+};
+
+// ========== JSONL Document Utilities ==========
+
+/**
+ * Parse JSONL file (one JSON object per line)
+ */
+export const parseJSONLDocumentFile = async (file: File): Promise<JSONLDocument[]> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      try {
+        const text = e.target?.result as string;
+        const lines = text.trim().split('\n');
+
+        const documents: JSONLDocument[] = [];
+
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          if (!line) continue; // Skip empty lines
+
+          try {
+            const doc = JSON.parse(line);
+
+            // Add internal tracking ID if not present
+            documents.push({
+              ...doc,
+              internal_id: doc.internal_id || generateId(),
+              approved: doc.approved || false,
+            });
+          } catch (lineError) {
+            console.error(`Error parsing line ${i + 1}:`, lineError);
+            reject(new Error(`Invalid JSON on line ${i + 1}`));
+            return;
+          }
+        }
+
+        if (documents.length === 0) {
+          reject(new Error('No valid documents found in JSONL file'));
+          return;
+        }
+
+        resolve(documents);
+      } catch (error) {
+        reject(error);
+      }
+    };
+
+    reader.onerror = () => reject(new Error('Failed to read file'));
+    reader.readAsText(file);
+  });
+};
+
+/**
+ * Export JSONL documents to JSONL format
+ */
+export const exportJSONLDocuments = (documents: JSONLDocument[], filename: string = 'jsonl_export.jsonl') => {
+  // Remove internal tracking fields before export
+  const exportData = documents.map(({ internal_id, approved, date_approved, approved_by, ...rest }) => rest);
+
+  // Convert to JSONL format (one JSON object per line)
+  const dataStr = exportData.map(doc => JSON.stringify(doc)).join('\n');
+  const dataBlob = new Blob([dataStr], { type: 'application/jsonl' });
+  const url = URL.createObjectURL(dataBlob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+};
+
+/**
+ * Export JSONL documents to JSON format (array)
+ */
+export const exportJSONLDocumentsAsJSON = (documents: JSONLDocument[], filename: string = 'jsonl_export.json') => {
+  // Remove internal tracking fields before export
+  const exportData = documents.map(({ internal_id, approved, date_approved, approved_by, ...rest }) => rest);
+
+  const dataStr = JSON.stringify(exportData, null, 2);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(dataBlob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+};
+
+/**
+ * Validate JSONL document
+ */
+export const validateJSONLDocument = (doc: Partial<JSONLDocument>): string | null => {
+  if (!doc.id?.trim()) {
+    return 'Document ID is required';
+  }
+  if (!doc.text?.trim()) {
+    return 'Document text is required';
+  }
+  if (doc.page_num === undefined || doc.page_num === null) {
+    return 'Page number is required';
+  }
+  if (!doc.metadata) {
+    return 'Metadata is required';
+  }
+  return null;
 };
